@@ -1,0 +1,125 @@
+<aside class="left-side sidebar-offcanvas">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            
+            <%
+                if(action && action === "settings") {
+            %>
+
+                        <li class="active">
+                            <a href="/admin/settings">
+                                <i class="fa fa-cogs"></i>
+                                <span>Website Settings</span>
+                            </a>
+                        </li>
+            <%
+                } else {  
+            %>    
+                        <li>
+                            <a href="/admin/settings">
+                                <i class="fa fa-cogs"></i>
+                                <span>Website Settings</span>
+                            </a>
+                        </li>
+            <%
+                }
+                if(action && action === "users") {
+            %>
+                        <li class="active">
+                            <a href="/admin/users">
+                                <i class="fa fa-users"></i>
+                                <span>Manage Users</span>
+                            </a>
+                        </li>
+            <%
+                } else {  
+            %>  
+                        <li>
+                            <a href="/admin/users">
+                                <i class="fa fa-users"></i>
+                                <span>Manage Users</span>
+                            </a>
+                        </li>
+             <%
+                }
+                if(action && action === "products") {
+            %>
+                        <li class="active">
+                            <a href="/admin/products">
+                                <i class="fa fa-th-list"></i>
+                                <span>Manage Products</span>
+                            </a>
+                        </li>
+            <%
+                } else {  
+            %>  
+                        <li>
+                            <a href="/admin/products">
+                                <i class="fa fa-th-list"></i>
+                                <span>Manage Products</span>
+                            </a>
+                        </li>
+
+            <%
+                }
+                if(action && action === "comment") {
+            %>
+                            <li class="active">
+                                <a href="/admin/comments">
+                                    <i class="fa fa-comment"></i>
+                                    <span>Comment Settings</span>
+                                </a>
+                            </li>
+            <%
+                } else {  
+            %>  
+                            <li>
+                                <a href="/admin/comments">
+                                    <i class="fa fa-comment"></i>
+                                    <span>Comment Settings</span>
+                                </a>
+                            </li>
+            <%
+                }
+                if(action && action === "orders") {
+            %>
+                            <li class="active">
+                                <a href="/admin/orders">
+                                    <i class="fa fa-money"></i>
+                                    <span>Orders Manage</span>
+                                </a>
+                            </li>
+            <%
+                } else {  
+            %>  
+                            <li>
+                                <a href="/admin/orders">
+                                    <i class="fa fa-money"></i>
+                                    <span>Orders Manage</span>
+                                </a>
+                            </li>
+            <%
+                }
+                if(action && action === "logout") {
+            %>
+                            <li class="active">
+                                <a href="/api/admin/logout">
+                                    <i class="fa fa-power-off"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </li>
+            <%
+                } else {  
+            %>  
+                            <li>
+                                <a href="/api/admin/logout">
+                                    <i class="fa fa-power-off"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </li>
+            <%
+                }
+            %>
+        </ul>
+    </section>
+</aside>

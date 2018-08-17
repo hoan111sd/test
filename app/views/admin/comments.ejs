@@ -1,0 +1,234 @@
+<%- include('./includes/header') %>
+	<title>Manage Products</title>
+	</head>
+	<%- include('./includes/headerUnder') %>
+
+		<body class="skin-blue">
+			<div class="wrapper row-offcanvas row-offcanvas-left">
+				<%- include('./includes/sideBar') %>
+					<aside class="right-side">
+						<section class="content-header">
+							<h1>
+								<i class="fa fa-users"></i>
+								Manage Products
+								<small>Add, Edit, Delete,Deactive, Active Products</small>
+							</h1>
+							<ol class="breadcrumb">
+								<li>
+									<a href="/">
+										<i class="fa fa-dashboard"></i> Home</a>
+								</li>
+								<li class="active">Producs</li>
+							</ol>
+						</section>
+						<section class="content">
+							<div id="loader-wrapper">
+								<div id="loader"></div>
+							</div>
+
+						</section>
+					</aside>
+			</div>
+			<%- include('./includes/footer') %>
+				<script>
+					let token = localStorage.getItem("token");
+					var url = window.location.href
+                    var arr = url.split("/");
+                    var id = arr[arr.length-1]
+					$.ajax
+						({
+							type: "GET",
+							url: `/api/admin/getComments/${id}`,
+							headers: { 'x-access-token': token },
+							success: function (response) {
+								console.log(response)
+								if (response.data && response.data.length > 0) {
+									console.log(response.data)
+									var Comments = response.data;
+
+									var totalRecords = response.total;
+									var perPage = response.perPage;
+
+									window.currentPage = response.currentPage;
+									window.lastPage = response.lastPage;
+									
+									$(".content").html(renderContent(Comments, totalRecords, perPage));
+
+								} else {
+
+									$(".content").html(renderContent(Comments, totalRecords, perPage));
+
+								} //end of else			
+							}
+						})
+						$(document).on("click", ".prev-page", function (e) {
+						if (window.currentPage === "1") {
+							return;
+						}
+						$(".content").html(`<div id="loader-wrapper"><div id="loader"></div></div>`);
+						$.ajax
+							({
+								type: "GET",
+								headers: { 'x-access-token': token },
+								url: `/api/admin/getComments/${id}/${Number(window.currentPage) - 1}`,
+								success: function (response) {
+									if (response.data && response.data.length > 0) {
+										var Comments = response.data;
+										var totalRecords = response.total;
+										var perPage = response.perPage;
+										window.currentPage = response.currentPage;
+										window.lastPage = response.totalPages;
+										$(".content").html(`${renderContent(Comments, totalRecords, perPage)}`); // end of if
+
+									} else {
+
+										$(".content").html(`${renderContent()}`);
+
+									}
+								}
+							});
+
+					});
+
+					$(document).on("click", ".next-page", function (e) {
+						if (window.lastPage === window.currentPage) {
+							return;
+						}
+						$(".content").html(`<div id="loader-wrapper"><div id="loader"></div></div>`);
+						$.ajax
+							({
+								type: "GET",
+								headers: { 'x-access-token': token },
+								url: `/api/admin/getComments/${id}/${Number(window.currentPage) + 1}`,
+								success: function (response) {
+									if (response.data && response.data.length > 0) {
+										var Comments = response.data;
+										var totalRecords = response.total;
+										var perPage = response.perPage;
+										window.currentPage = response.currentPage;
+										window.lastPage = response.totalPages;
+										$(".content").html(`${renderContent(Comments, totalRecords, perPage)}`); // end of if
+
+									} else {
+
+										$(".content").html(`${renderContent()}`);
+
+									}
+								}
+							});
+					});
+					function renderContent(Comments = "", totalRecords = "", perPage = "") {
+						if(Comments) {
+							return `
+								<input type="hidden" id="page" value="<?php echo $_POST['pageid'] ?>" />
+										<div class="col-lg-10 col-md-11 col-sm-12 col-xs-12">
+											<div class="row">
+												<div class="col-lg-2 col-md-2 col-sm-2 margin-bottom">
+													<a href="/admin/addProducts" class="btn btn-success">
+														<i class="fa fa-plus"></i> Add Product</a>
+												</div>
+											</div>
+											<div class="box box-warning">
+												<div class="box-header">
+													<h3 class="box-title">All Users</h3>
+												</div>
+												<div class="box-body no-padding">
+													<div class="table-responsive">
+														<table class="table table-striped">
+															<tr>
+																<th>#</th>
+																<th>User</th>
+																<th>Comment</th>
+																<th>Rating</th>
+																<th class="action">Action</th>
+															</tr>
+									${Comments.map((comment, index) => `
+															
+															<tr>
+																<td>
+																	${index + 1}
+																</td>
+																<td><a href="/admin/editUser/${comment.userID}" >${comment.username}</a>
+																</td>
+																<td><a href="/admin/editComment/${comment._id}" >${comment.content}</a>
+																</td>
+																<td>${comment.rating}</td>
+																<td>
+																	<button title="Delete Products" id="" class="delete-user btn btn-danger btn-xs">
+																		<span class="glyphicon glyphicon-trash"></span>
+																	</button>
+																	<a title="Edit Product" href="/admin/editComment/${comment._id}" class="btn btn-info btn-xs">
+																		<span class="glyphicon glyphicon-edit"></span>
+																	</a>
+																</td>
+															</tr>
+														`)}
+
+														</table>
+													</div>
+												</div>
+											</div>
+											<div class="pagination pagination-sm" style=" display: block; text-align: center;" >
+												${ totalRecords > perPage ? `
+												<a class="prev-page" style="display: inline-block; margin: 0 auto; padding: 2px 10px; border: 1px solid #333; color: #fff; margin: 0 3px; display: inline-block; background-color: #333;" href="#">«</a>
+												<a class="next-page" style="display: inline-block; margin: 0 auto; padding: 2px 10px; border: 1px solid #333; color: #fff; margin: 0 3px; display: inline-block; background-color: #333;"  href="#">»</a>
+												` : ``}
+											</div>
+										</div>	
+
+							`
+						} else {
+							return `
+								<input type="hidden" id="page" value="<?php echo $_POST['pageid'] ?>" />
+										<div class="col-lg-10 col-md-11 col-sm-12 col-xs-12">
+											<div class="row">
+												<div class="col-lg-2 col-md-2 col-sm-2 margin-bottom">
+													<a href="/admin/addProducts" class="btn btn-success">
+														<i class="fa fa-plus"></i> Add Product</a>
+												</div>
+												<div class="col-lg-5 col-md-6 col-sm-6 pull-right margin-bottom">
+													<form id="" name="" action="">
+														<div class="typeahead-container">
+															<div class="typeahead-field">
+																<span class="typeahead-query">
+																	<input id="search" name="search" type="search" placeholder="Search Product..." value="" autocomplete="off">
+																</span>
+																<span class="typeahead-button">
+																	<button type="submit">
+																		<i class="fa fa-search search-icon"></i>
+																	</button>
+																</span>
+															</div>
+														</div>
+													</form>
+												</div>
+											</div>
+											<div class="box box-warning">
+												<div class="box-header">
+													<h3 class="box-title">All Products</h3>
+												</div>
+												<div class="box-body no-padding">
+													<div class="table-responsive">
+														<table class="table table-striped">
+															<tr>
+																<th>#</th>
+																<th>Username</th>
+																<th>Email</th>
+																<th class="action">Action</th>
+															</tr>
+									
+															<p class="not-found">
+																							<i class="fa fa-folder-open"></i> No Comments Found
+																						</p>
+														</table>
+													</div>
+										
+												</div>
+													
+											</div>
+				
+										</div>
+							`
+						}
+					}
+				</script>

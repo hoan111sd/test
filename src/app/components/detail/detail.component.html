@@ -1,0 +1,607 @@
+<div id="content">
+  <div class="container">
+
+    <div class="col-md-12">
+      <ul class="breadcrumb">
+        <li>
+          <a href="#">Home</a>
+        </li>
+        <li>
+          <a href="#">Ladies</a>
+        </li>
+        <li>
+          <a href="#">Tops</a>
+        </li>
+        <li>White Blouse Armani</li>
+      </ul>
+
+    </div>
+
+
+
+    <div class="col-md-9">
+
+      <div class="row" id="productMain">
+        <div class="col-sm-6">
+          <div id="mainImage">
+            <img src={{product.slides[0]}} alt="" class="img-responsive">
+          </div>
+
+          <div *ngIf="product.sale != '0'" class="ribbon sale">
+            <div class="theribbon">{{product.sale }} %</div>
+            <div class="ribbon-background"></div>
+          </div>
+          <!-- /.ribbon -->
+
+          <div class="ribbon new" *ngIf="product.isNew">
+            <div class="theribbon">NEW</div>
+            <div class="ribbon-background"></div>
+          </div>
+          <!-- /.ribbon -->
+
+        </div>
+        <div class="col-sm-6">
+          <div class="box">
+            <h1 class="text-center">{{product.name}}</h1>
+            <p class="goToDescription">
+              <a href="#details" class="scroll-to">Scroll to product details, material & care and sizing</a>
+            </p>
+            <p style="text-align:center">
+              <del style="margin-right:4px" class="price">{{product.price }} VND </del>
+              <span class="price-sale">{{((100 - product.sale) * product.price/100) | number}} VND</span>
+            </p>
+
+            <p class="text-center buttons">
+              <button class="btn btn-primary scrollTop" (click)="addToCart()">
+                <i class="fa fa-shopping-cart"></i> Thanh toán</button>
+              <button (click)="addWishList()" class="btn btn-default" disabled>
+                <i class="fa fa-heart"></i> Thêm vào WishList</button>
+            </p>
+
+
+          </div>
+
+          <div class="row" id="thumbs">
+            <div class="col-xs-4">
+              <a href={{product.slides[0]}} class="thumb">
+                <img src={{product.slides[0]}} alt="" class="img-responsive">
+              </a>
+            </div>
+            <div class="col-xs-4">
+              <a href={{product.slides[0]}} class="thumb">
+                <img src={{product.slides[0]}} alt="" class="img-responsive">
+              </a>
+            </div>
+            <div class="col-xs-4">
+              <a href={{product.slides[0]}} class="thumb">
+                <img src={{product.slides[0]}} alt="" class="img-responsive">
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div>
+        <tabset>
+          <tab heading="Mô tả" id="tab1">
+            <div class="box" id="details">
+              <div *ngIf="product.info" [innerHTML]="product.info | safeHtml">
+
+              </div>
+
+              <div *ngIf="!product.info">
+                <p>
+                  <h4>Thông tin sản phẩm</h4>
+                  <p style="margin-left:5px">{{product.description}}</p>
+                  <h4 *ngIf="product.ingerdients">Đặc điểm</h4>
+                  <!-- <ul *ngIf="product.ingerdients" >
+                    <li *ngFor="let item of product.ingerdients">{{item}}</li>
+                  </ul> -->
+                  <p *ngIf="product.ingerdients">{{product.ingerdients}}</p>
+                  <h4>Brands</h4>
+                  <ul>
+                    <li style="font-weight: 700; color: #41B39C">{{product.brand | uppercase}}</li>
+                  </ul>
+                  <div *ngIf="product.howto">
+                    <h4>Cách dùng</h4>
+                    <p style="margin-left:5px">{{product.howto}}</p>
+                  </div>
+              </div>
+
+
+              <blockquote>
+                <p>
+                  <em>{{quote[0].quote}}</em>
+                </p>
+                <p class="pull-right" style="font-weight:600">
+                  <em>- {{quote[0].author}}</em>
+                </p>
+              </blockquote>
+
+              <hr>
+              <div class="social">
+                <h4>Show it to your friends</h4>
+                <p>
+                  <a style="cursor: pointer" class="external facebook" data-animate-hover="pulse" (click)="shareFB()">
+                    <i class="fa fa-facebook"></i>
+                  </a>
+                  <a href="#" class="external gplus" data-animate-hover="pulse">
+                    <i class="fa fa-google-plus"></i>
+                  </a>
+                  <a href="#" class="external twitter" data-animate-hover="pulse">
+                    <i class="fa fa-twitter"></i>
+                  </a>
+                  <a href="#" class="email" data-animate-hover="pulse">
+                    <i class="fa fa-envelope"></i>
+                  </a>
+                </p>
+                <p *ngIf="message" style="color: red">{{message}}</p>
+              </div>
+            </div>
+          </tab>
+
+          <tab heading="Nhận xét" class="review">
+            <div class="box">
+              <div class="row" id="post-review-box">
+                <div class="col-md-12">
+                  <form #f="ngForm" (ngSubmit)="submitComment(f)">
+                    <input id="ratings-hidden" name="comment" type="hidden">
+                    <textarea class="form-control animated" cols="50" id="new-review" name="comment" [(ngModel)]="comment" placeholder="Enter your review here..."
+                      rows="5"></textarea>
+
+                    <div class="text-right">
+                      <div>
+                        <rating [(ngModel)]="rate" [max]="max" [readonly]="isReadonly" name="rate" (click)="getRating($event)" (onLeave)="resetStar()"
+                          [titles]="['1','2','3']"></rating>
+                      </div>
+                      <p [hidden]="isLogin" style="color: red">{{message}}</p>
+                      <a class="btn btn-sm btn-danger" href="">
+                        <i class="fa fa-times-circle"></i> Clear</a>
+                      <button class="btn btn-success btn-md" type="submit" [disabled]="!isLogin">Save</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <!-- <div class="rating-block">
+                    <h4>Average user rating</h4>
+                    <h2 class="bold padding-bottom-7" *ngIf="allComments.avgRating">{{allComments.avgRating}}
+                      <small>/ 5</small>
+                    </h2>
+                    <button *ngIf="allComments.avgRating >= 1" type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating >= 2" type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating >= 3" type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating >= 4" type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating >= 5" type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating < 1" type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating < 2" type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating < 3" type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating < 4" type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button *ngIf="allComments.avgRating < 5" type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                  </div> -->
+                </div>
+                <div class="col-sm-6">
+                  <h4>Rating breakdown</h4>
+                  <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                      <div style="height:9px; margin:5px 0;">5
+                        <span class="glyphicon glyphicon-star"></span>
+                      </div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" style="width: 1000%">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">1</div>
+                  </div>
+                  <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                      <div style="height:9px; margin:5px 0;">4
+                        <span class="glyphicon glyphicon-star"></span>
+                      </div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: 80%">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">1</div>
+                  </div>
+                  <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                      <div style="height:9px; margin:5px 0;">3
+                        <span class="glyphicon glyphicon-star"></span>
+                      </div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5" style="width: 60%">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">0</div>
+                  </div>
+                  <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                      <div style="height:9px; margin:5px 0;">2
+                        <span class="glyphicon glyphicon-star"></span>
+                      </div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" style="width: 40%">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">0</div>
+                  </div>
+                  <div class="pull-left">
+                    <div class="pull-left" style="width:35px; line-height:1;">
+                      <div style="height:9px; margin:5px 0;">1
+                        <span class="glyphicon glyphicon-star"></span>
+                      </div>
+                    </div>
+                    <div class="pull-left" style="width:180px;">
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" style="width: 20%">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pull-right" style="margin-left:10px;">0</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <hr/>
+                  <div class="review-block" *ngFor="let comment of allComments">
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
+                        <div class="review-block-name">
+                          <a href="#">{{comment.username}}</a>
+                        </div>
+                        <div class="review-block-date">{{comment.createdAt | date}}
+                          <br/>{{comment.createdAt | amTimeAgo}}</div>
+                      </div>
+                      <div class="col-sm-9">
+                        <div class="review-block-rate">
+                          <button *ngIf="comment.rating >= 1" type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating >= 2" type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating >= 3" type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating >= 4" type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating >= 5" type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+
+                          <button *ngIf="comment.rating < 1" type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating < 2" type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating < 3" type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating < 4" type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                          <button *ngIf="comment.rating < 5" type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                          </button>
+                        </div>
+                        <div class="review-block-title">{{comment.content}}</div>
+                        <div class="review-block-description">{{comment.content}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Tư vấn mua hàng">
+            <div class="box">
+              <div class="row">
+                <div class="col-md-12">
+                  <p>Để được tư vấn mua hàng, bạn vui lòng gửi email đến địa chỉ:
+                    <a style="color: #00bb93">info@something.com</a> nhé.</p>
+                  <p>Hoặc điện thoại đến Hotline: 01234567890.</p>
+                  <p>Chúng tôi sẽ cố gắng trả lời cho bạn trong thời gian sớm nhất mọi thắc mắc của bạn.</p>
+                </div>
+              </div>
+            </div>
+          </tab>
+        </tabset>
+      </div>
+
+
+      <div class="row same-height-row same-height" *ngIf="recommentProducts">
+        <div class="col-md-3 col-sm-6">
+          <div class="box " style="height: auto; background-color: #4FBFA8; color: white">
+            <h3>Có thể bạn thích!</h3>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" *ngFor="let product of recommentProducts">
+          <div class="product same-height">
+            <div class="flip-container">
+              <div class="flipper">
+                <div class="front">
+                  <a href="detail.html">
+                    <img src="{{product.mainImage}}" alt="" class="img-responsive">
+                  </a>
+                </div>
+                <div class="back">
+                  <a href="detail.html">
+                    <img src="{{product.mainImage}}" alt="" class="img-responsive">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <a href="detail.html" class="invisible">
+              <img src="{{product.mainImage}}" alt="" class="img-responsive">
+            </a>
+            <div class="text">
+              <h3>
+                <a [routerLink]="['/detail', product._id]">{{product.name}}</a>
+              </h3>
+              <p class="price">{{product.price}} VND</p>
+            </div>
+          </div>
+          <!-- /.product -->
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-3">
+
+      <div class="col-md-12" *ngFor="let product of relatedProducts">
+        <div class="product same-height">
+          <div class="flip-container">
+            <div class="flipper">
+              <div class="front">
+                <a href="detail.html">
+                  <img src="{{product.mainImage}}" alt="" class="img-responsive">
+                </a>
+              </div>
+              <div class="back">
+                <a href="detail.html">
+                  <img src="{{product.mainImage}}" alt="" class="img-responsive">
+                </a>
+              </div>
+            </div>
+          </div>
+          <a href="detail.html" class="invisible">
+            <img src="{{product.mainImage}}" alt="" class="img-responsive">
+          </a>
+          <div class="text">
+            <h3>
+              <a [routerLink]="['/detail', product._id]">{{product.name}}</a>
+            </h3>
+            <p class="price">{{product.price}} VND</p>
+          </div>
+        </div>
+        <!-- /.product -->
+      </div>
+
+      <!-- *** MENUS AND FILTERS ***
+ _________________________________________________________ -->
+      <!-- <div class="panel panel-default sidebar-menu">
+
+        <div class="panel-heading">
+          <h3 class="panel-title">Categories</h3>
+        </div>
+
+        <div class="panel-body">
+          <ul class="nav nav-pills nav-stacked category-menu">
+            <li>
+              <a href="category.html">Men
+                <span class="badge pull-right">42</span>
+              </a>
+              <ul>
+                <li>
+                  <a href="category.html">T-shirts</a>
+                </li>
+                <li>
+                  <a href="category.html">Shirts</a>
+                </li>
+                <li>
+                  <a href="category.html">Pants</a>
+                </li>
+                <li>
+                  <a href="category.html">Accessories</a>
+                </li>
+              </ul>
+            </li>
+            <li class="active">
+              <a href="category.html">Ladies
+                <span class="badge pull-right">123</span>
+              </a>
+              <ul>
+                <li>
+                  <a href="category.html">T-shirts</a>
+                </li>
+                <li>
+                  <a href="category.html">Skirts</a>
+                </li>
+                <li>
+                  <a href="category.html">Pants</a>
+                </li>
+                <li>
+                  <a href="category.html">Accessories</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="category.html">Kids
+                <span class="badge pull-right">11</span>
+              </a>
+              <ul>
+                <li>
+                  <a href="category.html">T-shirts</a>
+                </li>
+                <li>
+                  <a href="category.html">Skirts</a>
+                </li>
+                <li>
+                  <a href="category.html">Pants</a>
+                </li>
+                <li>
+                  <a href="category.html">Accessories</a>
+                </li>
+              </ul>
+            </li>
+
+          </ul>
+
+        </div>
+      </div>
+
+      <div class="panel panel-default sidebar-menu">
+
+        <div class="panel-heading">
+          <h3 class="panel-title">Brands
+            <a class="btn btn-xs btn-danger pull-right" href="#">
+              <i class="fa fa-times-circle"></i> Clear</a>
+          </h3>
+        </div>
+
+        <div class="panel-body">
+
+          <form>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">Armani (10)
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">Versace (12)
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">Carlo Bruni (15)
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">Jack Honey (14)
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-default btn-sm btn-primary">
+              <i class="fa fa-pencil"></i> Apply</button>
+
+          </form>
+
+        </div>
+      </div>
+
+      <div class="panel panel-default sidebar-menu">
+
+        <div class="panel-heading">
+          <h3 class="panel-title">Colours
+            <a class="btn btn-xs btn-danger pull-right" href="#">
+              <i class="fa fa-times-circle"></i> Clear</a>
+          </h3>
+        </div>
+
+        <div class="panel-body">
+
+          <form>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">
+                  <span class="colour white"></span> White (14)
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">
+                  <span class="colour blue"></span> Blue (10)
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">
+                  <span class="colour green"></span> Green (20)
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">
+                  <span class="colour yellow"></span> Yellow (13)
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox">
+                  <span class="colour red"></span> Red (10)
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-default btn-sm btn-primary">
+              <i class="fa fa-pencil"></i> Apply</button>
+
+          </form>
+
+        </div>
+      </div> -->
+
+      <!-- *** MENUS AND FILTERS END *** -->
+
+      <!-- <div class="banner">
+        <a href="#">
+          <img src="./assets/img/banner.jpg" alt="sales 2014" class="img-responsive">
+        </a>
+      </div> -->
+    </div>
+    <!-- /.col-md-9 -->
+  </div>
+  <!-- /.container -->
+</div>
+<!-- /#content -->

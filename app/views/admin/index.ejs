@@ -1,0 +1,93 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <link href="/css/admin/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="/css/admin/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <link href="/css/admin/style.css" rel="stylesheet" type="text/css" />
+    <script src="/css/admin/js/jquery.js"></script>
+    <script src="/css/admin/js/bootstrap.js" type="text/javascript"></script>
+    <script src="/css/admin/js/script-theme.js" type="text/javascript"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+</head>
+
+<body>
+    <div class="form-box" id="login-box">
+        <div class="header">Sign In</div>
+        <ul id="colorz">
+            <li class="colorz colorz-red"></li>
+            <li class="colorz colorz-yellow"></li>
+            <li class="colorz colorz-blue"></li>
+        </ul>
+        <div id="loginError" style="display:none;"></div>
+        <form id="loginForm">
+            <div class="body">
+
+                <div class="form-group">
+                    <input id="signinEmail" type="text" name="email" class="form-control input-lg" placeholder="Email" />
+                </div>
+                <div class="form-group">
+                    <input id="signinPassword" type="password" name="password" class="form-control input-lg" placeholder="Password" />
+                </div>
+
+                <div class="g-recaptcha" data-sitekey="6LffB00UAAAAAKCipdmwqbLTzE7KCoJrd67SD7oG" data-expired-callback="dataExpired" data-callback="correctCaptcha"></div>
+
+            </div>
+            <div class="footer">
+                <input type="hidden" name="csrf" value="" />
+                <button id="logInBtn" type="submit" name="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
+                <!-- <p class="text-center">
+                    <a href="reset.php">I forgot my password</a>
+                </p> -->
+            </div>
+        </form>
+    </div>
+
+</body>
+<script>
+    var recaptcha = "";
+    var correctCaptcha = function (response) {
+        $("#logInBtn").prop('disabled', false);
+        recaptcha = response;
+    }
+
+    var dataExpired = function (response) {
+        $("#logInBtn").prop('disabled', true);
+    }
+
+    $("#loginForm").on("submit", function (event) {
+        event.preventDefault();
+
+        var email = $("#signinEmail").val();
+        var password = $("#signinPassword").val();
+        console.log(recaptcha);
+        $("#login-box").append(`<div id="loader-wrapper"><div id="loader"></div></div>`);
+        $.ajax({
+            url: "/admin/login",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ email: email, password: password, recaptcha: recaptcha }),
+            success: function (response) {
+                if (response.success === false) {
+                    document.getElementById("loginError").style.display = "block";
+                    $("#loginError").html(`<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Error!</strong> ' ${response.error} '</div>`);
+                } else {
+                    if (typeof (Storage) !== "undefined") {
+                        console.log(response.data[0]);
+                        localStorage.setItem("token", response.data[0].token);
+                        localStorage.setItem("ssID", response.data[0].ssID);
+                        localStorage.setItem("firstName", response.data[0].profile.firstName);
+                    }
+                    let token = localStorage.getItem("token");
+                    console.log(token);
+                    location.href = "/admin/users";
+                }
+            }
+        });
+    });
+</script>
+
+</html>

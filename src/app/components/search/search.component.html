@@ -1,0 +1,90 @@
+<div id="content">
+  <div class="container">
+    <div class="row">
+
+
+      <div class="col-md-12">
+        <div class="panel panel-default sidebar-menu">
+
+          <div class="panel-heading">
+            <h3 class="panel-title text-center">Tìm kiếm nâng cao</h3>
+          </div>
+
+          <div class="panel-body">
+            <form #f="ngForm" (ngSubmit)="search2(f.value)" [formGroup]="searchForm">
+              <div class="col-md-1"></div>
+
+              <div class="col-md-4 form-group">
+                <label for="comment">Mô tả: </label>
+                <input type="text" class="form-control" formControlName="description">
+                <div style="margin-top: 10px">
+                  <button class="btn btn-default btn-sm btn-primary" type="submit">
+                    <i class="fa fa-pencil"></i> Tìm kiếm</button>
+                </div>
+
+              </div>
+
+              <div class="col-md-1"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row products" *ngIf="productsSearch">
+
+      <div class="col-md-3 col-sm-6" *ngFor="let product of productsSearch">
+        <div class="product">
+          <div class="flip-container">
+            <div class="flipper">
+              <div class="front">
+                <a href="detail.html">
+                  <img src="{{product.mainImage}}" alt="" style="height:250px" class="img-responsive" align="middle">
+                </a>
+              </div>
+              <div class="back">
+                <a href="detail.html">
+                  <img src="{{product.mainImage}}" alt="" style="height:250px" class="img-responsive" align="middle">
+                </a>
+              </div>
+            </div>
+          </div>
+          <a [routerLink]="['/detail', product._id]" class="invisible">
+            <img src="{{product.mainImage}}" style="height:250px" alt="" class="img-responsive" align="middle">
+          </a>
+          <div class="text">
+            <h3>
+              <a [routerLink]="['/detail', product._id]">{{product.name}}</a>
+            </h3>
+            <p class="brand">{{product.brand}}</p>
+            <p class="buttons" *ngIf="product.sale > 0">
+              <del class="price" style="margin-right:4px">{{product.price | number}} VND </del>
+              <span class="price-sale">{{(100 -product.sale)*product.price/100 | number}} VND</span>
+            </p>
+            <p class="buttons" *ngIf="product.sale == 0">
+              <span class="price">{{product.price | number}} VND</span>
+            </p>
+            <a class="btn btn-primary" style="display:block; margin: 0 auto 10px auto" [routerLink]="['/detail', product._id]">Chi tiết</a>
+          </div>
+          <!-- /.text -->
+          <div class="ribbon sale" *ngIf="product.sale > 0">
+            <div class="theribbon">{{product.sale}}%</div>
+            <div class="ribbon-background"></div>
+          </div>
+          <!-- /.ribbon -->
+
+          <div class="ribbon new" *ngIf="product.new">
+            <div class="theribbon">NEW</div>
+            <div class="ribbon-background"></div>
+          </div>
+          <!-- /.ribbon -->
+        </div>
+        <!-- /.product -->
+      </div>
+
+
+
+
+    </div>
+  </div>
+</div>

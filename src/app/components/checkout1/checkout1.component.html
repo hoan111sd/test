@@ -1,0 +1,216 @@
+<div id="content">
+  <div class="container">
+
+    <div class="col-md-12">
+      <ul class="breadcrumb">
+        <li>
+          <a href="#">Home</a>
+        </li>
+        <li>Checkout - Address</li>
+      </ul>
+    </div>
+
+    <div class="col-md-9" id="checkout">
+
+      <div class="box" *ngIf="_checkout1">
+        <form #f="ngForm" (ngSubmit)="checkout1()" [formGroup]="checkoutForm">
+          <h1>Checkout</h1>
+          <ul class="nav nav-pills nav-justified">
+            <li class="active">
+              <a href="#">
+                <i class="fa fa-map-marker"></i>
+                <br>Address</a>
+            </li>
+            <li class="disabled">
+              <a href="#">
+                <i class="fa fa-eye"></i>
+                <br>Order Review</a>
+            </li>
+          </ul>
+
+          <div class="content">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="firstname">Họ tên</label>
+                  <input type="text" class="form-control" id="firstname" formControlName="name" name="name">
+                  <div *ngIf="checkoutForm.get('name').errors && (checkoutForm.get('name').dirty || checkoutForm.get('name').touched)">
+                    <div [hidden]="!checkoutForm.get('name').errors.required " class="warning">*Bắt buộc</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="firstname">Email</label>
+                  <input type="text" class="form-control" id="email" formControlName="email" name="email">
+                  <div *ngIf="checkoutForm.get('email').errors && (checkoutForm.get('email').dirty || checkoutForm.get('email').touched)">
+                    <div [hidden]="!checkoutForm.get('email').errors.email" class="warning">*Email không hợp lệ</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="company">Điện thoại</label>
+                  <input type="text" class="form-control" id="company" formControlName="phone" pattern="[0+][0-9]{9}" name="phone">
+                  <div *ngIf="checkoutForm.get('phone').errors && (checkoutForm.get('phone').dirty || checkoutForm.get('phone').touched)">
+                    <div [hidden]="!checkoutForm.get('phone').errors.required " class="warning">*Bắt buộc</div>
+                    <div [hidden]="!checkoutForm.get('phone').errors.pattern " class="warning">*Số điện thoại không hợp lệ</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="street">Địa chỉ</label>
+                  <input type="text" class="form-control" id="street" formControlName="address" name="address">
+                  <div *ngIf="checkoutForm.get('address').errors && (checkoutForm.get('address').dirty || checkoutForm.get('address').touched)">
+                    <div [hidden]="!checkoutForm.get('address').errors.required || checkoutForm.get('address').value != '' " class="warning">*Bắt buộc</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="phone">
+                    <b>Pương thức thanh toán</b>
+                  </label>
+
+                </div>
+              </div>
+              <div class="col-md-9">
+                <div class="form-group">
+                  <label class="radio-inline">
+                    <input type="radio" name="paymentMethod" formControlName="paymentMethod" value="paypal">Paypal</label>
+                  <label class="radio-inline">
+                    <input type="radio" name="paymentMethod" formControlName="paymentMethod" value="cod">Thanh toán khi nhận hàng</label>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- /.row -->
+          </div>
+
+          <div class="box-footer">
+            <div class="pull-left">
+              <a [routerLink]="['/basket']" class="btn btn-default">
+                <i class="fa fa-chevron-left"></i>Quay lại giỏ hàng</a>
+            </div>
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="checkout1()" [disabled]="!f.form.valid">Xác nhận
+                <i class="fa fa-chevron-right "></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- /.box 4-->
+      <div class="box ">
+        <form *ngIf="_checkout4 ">
+          <h1>Checkout - Order review</h1>
+          <ul class="nav nav-pills nav-justified ">
+            <li>
+              <a href="checkout.html">
+                <i class="fa fa-map-marker"></i>
+                <br>Address</a>
+            </li>
+            <li class="active ">
+              <a href="# ">
+                <i class="fa fa-eye "></i>
+                <br>Order Review</a>
+            </li>
+          </ul>
+
+          <div class="content ">
+            <div class="table-responsive ">
+              <table class="table ">
+                <thead>
+                  <tr>
+                    <th colspan="2 ">Product</th>
+                    <th>Quantity</th>
+                    <th>Unit price</th>
+                    <th>Discount</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of products ">
+                    <td>
+                      <a>
+                        <img src="{{item.mainImage}} " alt="White Blouse Armani ">
+                      </a>
+                    </td>
+                    <td style="width: 35% ">
+                      <a>{{item.name}}</a>
+                    </td>
+                    <td>1</td>
+                    <td *ngIf="item.sale==0 ">{{item.price | number}} VND</td>
+                    <td *ngIf="item.sale> 0">{{item.price * (100 - item.sale) / 100 | number}} VND</td>
+                    <td>0.00 VND</td>
+                    <td>{{item.price | number}} VND</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="5">Tổng cộng</th>
+                    <th>{{total | number}} VND</th>
+                  </tr>
+                </tfoot>
+              </table>
+
+            </div>
+            <!-- /.table-responsive -->
+          </div>
+          <!-- /.content -->
+        </form>
+      </div>
+      <!-- /.box -->
+    </div>
+    <!-- /.col-md-9 -->
+
+    <div class="col-md-3">
+
+      <div class="box" id="order-summary">
+        <div class="box-header">
+          <h3>Order summary</h3>
+        </div>
+        <p class="text-muted">Shipping and additional costs are calculated based on the values you have entered.</p>
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Order subtotal</td>
+                <th>$0.00</th>
+              </tr>
+              <tr>
+                <td>Shipping and handling</td>
+                <th>$00.00</th>
+              </tr>
+              <tr>
+                <td>Tax</td>
+                <th>$0.00</th>
+              </tr>
+              <tr class="total">
+                <td>Total</td>
+                <th>$0.000</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+    <!-- /.col-md-3 -->
+
+  </div>
+  <!-- /.container -->
+</div>

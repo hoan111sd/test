@@ -1,0 +1,41 @@
+<script type="text/javascript" src="/js/admin/highcharts.js"></script>
+
+<script type="text/javascript" src="/js/admin/bootstrap.js"></script>
+
+<script type="text/javascript" src="/js/admin/script-theme.js"></script>
+<script type="text/javascript" src="/js/admin/jquery-ui.js"></script>
+<script type="text/javascript" src="/js/admin/sweet-alert.js"></script>
+<script type="text/javascript" src="/js/admin/typeahead.js"></script>
+<script type="text/javascript" src="/js/admin/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="/js/admin/highlight.js"></script>
+<script type="text/javascript" src="/js/admin/bootstrap-switch.js"></script>
+<script type="text/javascript" src="/js/admin/tagsinput.js"></script>
+<script type="text/javascript" src="/js/admin/main.js"></script>
+<script type="text/javascript" src="/js/admin/iconset-fontawesome-4.2.0.min.js"></script>
+<script type="text/javascript" src="/js/admin/bootstrap-iconpicker.min.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+<script>
+    tinymce.init
+        ({
+            selector: "#content",
+            theme: "modern"
+        });
+    $(".click-logo").click(function () {
+        $(".show-logo").trigger("click");
+    });
+    $(".click-favicon").click(function () {
+        $(".show-favicon").trigger("click");
+    });
+    $(".click-listImage").click(function () {
+        $(".show-listImage").trigger("click");
+    });
+    $(function () {
+        $("#keywords").tagsInput({
+            width: "auto",
+            color: "blue"
+        });
+    });
+</script>
+</body>
+
+</html>

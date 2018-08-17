@@ -1,0 +1,18 @@
+.warning {
+    color: #D9534F;
+    padding-top: 4px;
+    padding-left: 2px;
+}
+.modal-body form p {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+}
+.advanced-search {
+    display: block;
+    margin: 0 auto;
+    line-height: 70px;
+}
+.modal-sm {
+    width: 335px;
+}

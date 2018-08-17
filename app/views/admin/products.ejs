@@ -1,0 +1,253 @@
+<%- include('./includes/header') %>
+	<title>Manage Products</title>
+	</head>
+	<%- include('./includes/headerUnder') %>
+
+		<body class="skin-blue">
+			<div class="wrapper row-offcanvas row-offcanvas-left">
+				<%- include('./includes/sideBar') %>
+					<aside class="right-side">
+						<section class="content-header">
+							<h1>
+								<i class="fa fa-users"></i>
+								Manage Products
+								<small>Add, Edit, Delete,Deactive, Active Products</small>
+							</h1>
+							<ol class="breadcrumb">
+								<li>
+									<a href="/">
+										<i class="fa fa-dashboard"></i> Home</a>
+								</li>
+								<li class="active">Producs</li>
+							</ol>
+						</section>
+						<section class="content">
+							<div id="loader-wrapper">
+								<div id="loader"></div>
+							</div>
+
+						</section>
+					</aside>
+			</div>
+			<%- include('./includes/footer') %>
+				<script>
+					let token = localStorage.getItem("token");
+					window.token = token;
+					$.ajax
+						({
+							type: "GET",
+							url: "/api/products/",
+							headers: { 'x-access-token': token },
+							success: function (response) {
+								console.log(response)
+								if (response.data && response.data.length > 0) {
+									console.log(response.data)
+									var Products = response.data;
+									var totalRecords = response.total;
+									var perPage = response.perPage;
+									window.currentPage = response.currentPage;
+									window.lastPage = response.totalPages;
+									$(".content").html(renderContent(Products, totalRecords, perPage)); // end of if
+
+								} else {
+
+									$(".content").html(renderContent());
+
+								} //end of else			
+							}
+						})
+					$(document).on("click", ".delete-product", function (e) {
+						let productID = $("#delete-product").val();
+						let token = window.token;
+						$(".content").html(`<div id="loader-wrapper"><div id="loader"></div></div>`);
+						$.ajax
+							({
+								type: "PUT",
+								url: `/api/admin/deleteProduct`,
+								headers: { 'x-access-token': token },
+								contentType: 'application/json',
+								data: JSON.stringify({ productID: productID, page: window.currentPage }),
+								success: function (response) {
+
+									if (response.data && response.data.length > 0) {
+										var Products = response.data;
+										var totalRecords = response.total;
+										var perPage = response.perPage;
+										window.currentPage = response.currentPage;
+										window.lastPage = response.totalPages;
+										$(".content").html(renderContent(Products)); // end of if
+									} else {
+										$(".content").html(renderContent());
+									}
+								}
+							})
+
+					});
+					$(document).on("click", ".prev-page", function (e) {
+						if (window.currentPage === "1") {
+							return;
+						}
+						$(".content").html(`<div id="loader-wrapper"><div id="loader"></div></div>`);
+						$.ajax
+							({
+								type: "GET",
+								headers: { 'x-access-token': token },
+								url: `/api/products/${Number(window.currentPage) - 1}`,
+								success: function (response) {
+									if (response.data && response.data.length > 0) {
+										var Products = response.data;
+										var totalRecords = response.total;
+										var perPage = response.perPage;
+										window.currentPage = response.currentPage;
+										window.lastPage = response.totalPages;
+										$(".content").html(`${renderContent(Products, totalRecords, perPage)}`); // end of if
+
+									} else {
+
+										$(".content").html(`${renderContent()}`);
+
+									}
+								}
+							});
+
+					});
+
+					$(document).on("click", ".next-page", function (e) {
+						if (window.lastPage === window.currentPage) {
+							return;
+						}
+						$(".content").html(`<div id="loader-wrapper"><div id="loader"></div></div>`);
+						$.ajax
+							({
+								type: "GET",
+								headers: { 'x-access-token': token },
+								url: `/api/products/${Number(window.currentPage) + 1}`,
+								success: function (response) {
+									if (response.data && response.data.length > 0) {
+										var Products = response.data;
+										var totalRecords = response.total;
+										var perPage = response.perPage;
+										window.currentPage = response.currentPage;
+										window.lastPage = response.totalPages;
+										$(".content").html(`${renderContent(Products, totalRecords, perPage)}`); // end of if
+
+									} else {
+
+										$(".content").html(`${renderContent()}`);
+
+									}
+								}
+							});
+					});
+					function renderContent(Products, totalRecords, perPage) {
+						if (Products) {
+							return `
+							<input type="hidden" id="page" value="<?php echo $_POST['pageid'] ?>" />
+										<div class="col-lg-10 col-md-11 col-sm-12 col-xs-12">
+											<div class="row">
+												<div class="col-lg-2 col-md-2 col-sm-2 margin-bottom">
+													<a href="/admin/addProducts" class="btn btn-success">
+														<i class="fa fa-plus"></i> Add Product</a>
+												</div>
+												
+											</div>
+											<div class="box box-warning">
+												<div class="box-header">
+													<h3 class="box-title">All Users</h3>
+												</div>
+												<div class="box-body no-padding">
+													<div class="table-responsive">
+														<table class="table table-striped">
+															<tr>
+																<th>#</th>
+																<th>Product name</th>
+																<th class="action">Action</th>
+															</tr>
+									${Products.map((product, index) => `
+															
+															<tr>
+																<td>
+																	${index + 1}
+																</td>
+																<td><a href="/admin/product/${product._id}" >${product.name}</a>
+																</td>
+																
+																<td>
+																	<button title="Delete Products" id="delete-product" value="${product._id}" class="delete-product btn btn-danger btn-xs">
+																		<span class="glyphicon glyphicon-trash"></span>
+																	</button>
+																	<a title="Edit Product" href="/admin/product/${product._id}" class="btn btn-info btn-xs">
+																		<span class="glyphicon glyphicon-edit"></span>
+																	</a>
+																</td>
+															</tr>
+														`)}
+
+														</table>
+													</div>
+												</div>
+											</div>
+											<div class="pagination pagination-sm" style=" display: block; text-align: center;" >
+												${ totalRecords > perPage ? `
+												<a class="prev-page" style="display: inline-block; margin: 0 auto; padding: 2px 10px; border: 1px solid #333; color: #fff; margin: 0 3px; display: inline-block; background-color: #333;" href="#">«</a>
+												<a class="next-page" style="display: inline-block; margin: 0 auto; padding: 2px 10px; border: 1px solid #333; color: #fff; margin: 0 3px; display: inline-block; background-color: #333;"  href="#">»</a>
+												` : ``}
+											</div>
+										</div>	
+									`
+						} else {
+							return `
+							<input type="hidden" id="page" value="<?php echo $_POST['pageid'] ?>" />
+								<div class="col-lg-10 col-md-11 col-sm-12 col-xs-12">
+									<div class="row">
+										<div class="col-lg-2 col-md-2 col-sm-2 margin-bottom">
+											<a href="/admin/addProducts" class="btn btn-success">
+												<i class="fa fa-plus"></i> Add Product</a>
+										</div>
+										<div class="col-lg-5 col-md-6 col-sm-6 pull-right margin-bottom">
+											<form id="" name="" action="">
+												<div class="typeahead-container">
+													<div class="typeahead-field">
+														<span class="typeahead-query">
+															<input id="search" name="search" type="search" placeholder="Search Product..." value="" autocomplete="off">
+														</span>
+														<span class="typeahead-button">
+															<button type="submit">
+																<i class="fa fa-search search-icon"></i>
+															</button>
+														</span>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+									<div class="box box-warning">
+										<div class="box-header">
+											<h3 class="box-title">All Products</h3>
+										</div>
+										<div class="box-body no-padding">
+											<div class="table-responsive">
+												<table class="table table-striped">
+													<tr>
+														<th>#</th>
+														<th>Username</th>
+														<th>Email</th>
+														<th class="action">Action</th>
+													</tr>
+							
+													<p class="not-found">
+																					<i class="fa fa-folder-open"></i> No Products Found
+																				</p>
+												</table>
+											</div>
+								
+										</div>
+											
+									</div>
+		
+								</div>
+							`
+						}
+					}
+
+				</script>

@@ -1,0 +1,143 @@
+<%- include('./includes/header') %>
+<title>Product details</title>
+</head>
+	 <%- include('./includes/headerUnder') %>
+<body class="skin-blue">
+	<div class="wrapper row-offcanvas row-offcanvas-left">
+		<%- include('./includes/sideBar') %>
+		<aside class="right-side">
+			<section class="content-header">
+				<h1>
+					<i class="fa fa-th-list"></i>
+					Product details
+					<small>Add a product s</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+					<li class="active">ADD Slide</li>
+				</ol>
+			</section>
+			<section class="content">
+				<div class="col-lg-8 col-md-8 col-xs-12">
+					<div class="box box-warning">
+						<div class="box-header">
+							<h3 class="box-title">Add a slide</h3>
+						</div>
+						<div class="box-body">
+							<?php
+							if($error)
+							{
+								?>
+								<div class="alert alert-danger alert-dismissable">
+									<i class="fa fa-ban"></i>
+									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+									<b>Error !</b> <?php echo $error; ?>
+								</div>
+								<?php
+							}
+							else if(isset($_POST['submit']) && !$error)
+							{
+								?>
+								<div class="alert alert-success alert-dismissable">
+									<i class="fa fa-check-square"></i>
+									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+									<b>Success !</b> Slide ADD Successfully
+								</div>
+								<?php
+							}
+							?>
+							<form role="form" method="post" action="<?php echo rootpath() ?>/admin/addSlide.php" enctype="multipart/form-data">
+								<div class="form-group">
+									<label>Title</label>
+									<input type="text" name="title" value="<?php echo $title; ?>" class="form-control input-lg" placeholder="Enter Title">
+								</div>
+								<div class="form-group">
+									<label>Link(optional)</label>
+									<input type="text" name="slidelink" value="<?php echo $slidelink;?>" class="form-control input-lg" placeholder="Enter optional link">
+								</div>
+								<input type="hidden" name="listid" value="<?php echo $listid;?>" class="form-control input-lg" placeholder="Enter Title">
+								<div class="form-group">
+									<label>Description</label>
+									<textarea class="form-control" placeholder="Write Description" name="description" rows="5" required="" name="description"><?php echo $description;?></textarea>
+								</div>
+								<div class="form-group">
+									<a class="btn btn-primary btn-xs mrg-10-top">You can Embed video of youtube.com , dailymotion.com , vimeo.com , metacafe.com.</a>
+								</div>
+								<div class="form-group">
+									<img style="display:none" style="height:auto; width:200px !important;" class="logo_web" id="srcslide" src="" />
+								</div>
+								<div id="showSlideOption" class="form-group">
+									<a onclick="SlideOption()" class="btn btn-default"><i class="fa fa-files-o"></i>  Add New Slide </a>
+								</div>
+								<div style="display:none" id="selectedSlideOption" class="form-group">
+									<a onclick="SelectedImageSlideOption()" class="btn btn-primary"><i class="fa fa-picture-o"></i>  Image Slide </a>
+									<a onclick="SelectedVideoSlideOption()" class="btn btn-info"><i class="fa fa-video-camera"></i>  Video Slide </a>
+								</div>
+								<div id="showuploadSlide" style="display:none" class="form-group">
+									<input class="hide show-large-logo" type="file" name="file" id="uploadslide" onchange="readslide(this);" style="display:none;" />
+									<a onclick="triggerslide()" class="btn btn-success"><i class="fa fa-upload"></i>  Upload Slide </a>
+									<a onclick="resetOption()" class="btn btn-warning"><i class="fa fa-chevron-right"></i>  Reset </a>
+								</div>
+								<div style="display:none" id="showEmbedLink" class="form-group">
+									<label>Video Url</label>
+									<input type="text" id="slidevideoLink" value="<?php echo $vlink; ?>" name="vlink" class="form-control input-lg" placeholder="Enter Video Url">
+									</br>
+									<a onclick="resetOption()" class="btn btn-warning"><i class="fa fa-chevron-right"></i>  Reset </a>
+								</div>		
+								<input type="hidden" name="csrf" value="<?php echo $key; ?>"/>			
+								<div class="form-group">
+									<a href="<?php echo rootpath();?>/admin/slides.php?lid=<?php echo $listid; ?>" class="btn btn-default btn-md"><i class="fa fa-chevron-left"></i> Back</a>
+									<button type="submit" name="submit" class="btn btn-primary btn-md"><i class="fa fa-check"></i> Update</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</section>
+		</aside>
+	</div>
+<%- include('./includes/footer') %>
+	<script>
+	function triggerslide() {
+		$("#uploadslide").trigger('click');
+	};
+	function readslide(input) 
+	{
+		if(input.files && input.files[0]) 
+		{
+			document.getElementById("srcslide").style.display="block";
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				$('#srcslide')
+				.attr('src', e.target.result)
+				.width(200)
+				.height('auto');
+			};
+			reader.readAsDataURL(input.files[0]);
+		}
+	}
+	function SlideOption()
+	{
+		document.getElementById("showSlideOption").style.display = 'none';
+		document.getElementById("selectedSlideOption").style.display = 'block';
+	}
+	function SelectedImageSlideOption()
+	{
+		document.getElementById("selectedSlideOption").style.display = 'none';
+		document.getElementById("showuploadSlide").style.display = 'block';
+	}
+	function SelectedVideoSlideOption()
+	{
+		document.getElementById("selectedSlideOption").style.display = 'none';
+		document.getElementById("showEmbedLink").style.display = 'block';
+	}
+	function resetOption()
+	{	
+		$('#uploadslide').val('');
+		document.getElementById("showSlideOption").style.display = 'block';
+		document.getElementById("selectedSlideOption").style.display = 'none';
+		document.getElementById("showuploadSlide").style.display = 'none';
+		document.getElementById("showEmbedLink").style.display = 'none';
+		document.getElementById("srcslide").style.display = 'none';	
+	}
+	</script>
